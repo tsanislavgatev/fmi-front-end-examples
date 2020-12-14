@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+		<title>FMI component</title>
+	</head>
+	<body>
+
+		<fmi-counter count="0"></fmi-counter>
+		<script type="module" >
+			class FmiCounter extends HTMLElement {
+				constructor() {
+					super();
+					this.shadow = this.attachShadow({ mode:"open" });
+				}
+
+				static get observedAttributes() {
+					return ["count"];
+				}
+
+				get count() {
+					return this.getAttribute("count"); 
+				}
+
+				set count(val) {
+					this.setAttribute("count", val);
+				}
+				
+				attributeChangedCallback(prop, oldVal, newVal) {
+					if (prop === "count") {
+						this.render();
+						const button = this.shadow.querySelector('#btn');
+						button.addEventListener("click", this.incrementCounter.bind(this));
+					}
+				}
+
+				connectedCallback() {
+					this.render();
+					const button = this.shadow.querySelector('#btn');
+					button.addEventListener("click", this.incrementCounter.bind(this));
+				}
+
+				incrementCounter() {
+					this.count++;
+				}
+
+				render() {
+					this.shadow.innerHTML = `
+					<h1> FMI Counter </h1>
+					${this.count}
+					<button id='btn'> Add </button>
+					`;
+				}
+			}
+			customElements.define('fmi-counter', FmiCounter);
+		</script>
+	</body>
+</html>
